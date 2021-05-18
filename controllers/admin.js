@@ -6,10 +6,23 @@ exports.getAddProduct = (req, res, next) => {
     pageTitle: 'Add a product',
     path: '/admin/add-product',
     editing: false,
+    errorMessage: null
   })
 }
 
 exports.postAddProduct = (req, res, next) => {
+
+  const errors = validationResult(req)
+  if(!errors.isEmpty()) {
+    console.log('postSddProduct:' ,errors)
+    return res.status(422).render('admin/edit-product', {
+      pageTitle: 'Add Product',
+      path: '/admin',
+      editing: false,
+      errorMessage: errors.array()[0].msg,
+      
+    })
+  } 
   const product = new Product({
     title: req.body.title,
     price: req.body.price,
@@ -20,6 +33,7 @@ exports.postAddProduct = (req, res, next) => {
   product.save().then(() => {
     res.redirect('/')
   }).catch(err => console.log(err))
+
 }
 
 exports.getEditProduct = (req, res, next) => {
@@ -34,19 +48,36 @@ exports.getEditProduct = (req, res, next) => {
         path: '/admin/edit-product',
         editing: editMode,
         product: product,
+        errorMessage: null
       })
     })
     .catch((err) => console.log(err))
 }
 
 exports.postEditProduct = (req, res, next) => {
+
   const prodId = req.body.productId
   const updatedTitle = req.body.title
   const updatedPrice = req.body.price
   const updateDesc = req.body.description
   const updatedImageUrl = req.body.imageUrl
 
+  const errors = validationResult(req)
+  
+
   Product.findById(prodId).then(product => {
+
+    if(!errors.isEmpty()) {
+      console.log('postEditProduct:' ,errors)
+      return res.status(422).render('admin/edit-product', {
+        pageTitle: 'Edit Product',
+        path: '/admin/edit-product',
+        editing: true,
+        errorMessage: errors.array()[0].msg,
+        product: product
+      })
+    }
+
     product.title = updatedTitle,
     product.price = updatedPrice,
     product.description = updateDesc,

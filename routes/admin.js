@@ -14,10 +14,10 @@ router.get('/add-product', isAuth, adminController.getAddProduct);
 // @desc    Add a product in products collection
 // @access  Private
 router.post('/add-product', [
-    body('title').isString().isLength({ min: 3 }).trim(),
-    body('imageUrl').isURL(),
-    body('price').isFloat(),
-    body('description').isLength({ min: 5, max: 400 }).trim()
+    body('title').isString().isLength({ min: 3 }).trim().withMessage("Invalid title! Please write over 3 letters"),
+    body('imageUrl').isURL().withMessage("Invalid url"),
+    body('price').isFloat().withMessage("Invalid price"),
+    body('description').isLength({ min: 5, max: 400 }).trim().withMessage("Invalid title! Please write over 5 letters")
 ], isAuth, adminController.postAddProduct);
 
 // @route   GET /admin/edit-product
@@ -29,10 +29,10 @@ router.get('/edit-product/:productId', isAuth, adminController.getEditProduct)
 // @desc    Edit a certain product
 // @access  Private
 router.post('/edit-product', [
-    body('title').isString().isLength({ min: 3 }).trim(),
-    body('imageUrl').isURL(),
-    body('price').isFloat(),
-    body('description').isLength({ min: 5, max: 400 }).trim()
+    body('title').isString().withMessage("Invalid title! Please write over 3 letters").isLength({ min: 3 }).trim(),
+    body('imageUrl').isURL().withMessage("Invalid url"),
+    body('price').isFloat().withMessage("Invalid price"),
+    body('description').isLength({ min: 5, max: 400 }).trim().withMessage("Invalid title! Please write over 5 letters")
 ],isAuth, adminController.postEditProduct)
 
 // @route   POST /admin/delete-product
